@@ -1,0 +1,23 @@
+﻿@page "/component"
+@using Components;
+
+<BlazorPromises.Components.PromiseComponent @ref=@promiseComponent />
+<button @onclick="@RunService">Click me</button>
+
+<p>Open the F12 tools and check the Console for more output</p>
+
+@code {
+    private PromiseComponent? promiseComponent;
+
+    protected override Task OnInitializedAsync()
+    {
+        promiseComponent = new PromiseComponent();
+
+        return base.OnInitializedAsync();
+    }
+
+    void RunService()
+    {
+        promiseComponent!.RunServicesNeeded();
+    }
+}

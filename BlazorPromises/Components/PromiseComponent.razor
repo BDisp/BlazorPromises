@@ -1,0 +1,39 @@
+﻿@inject Promises Promises
+
+<h1>Promise Component test</h1>
+
+<p>Result "myPromiseFn": @promisesService?.MyPromiseFnResult</p>
+<p>Result "errorPromiseFn": @promisesService?.ErrorPromiseFnResult</p>
+<p>Result "complexPromiseFn": @promisesService?.ComplexPromiseFnResult</p>
+<p>Result "paramPromiseFn": @promisesService?.ParamPromiseFnResult</p>
+<p>Status: @promisesService?.Status</p>
+
+@code {
+    private PromisesService? promisesService;
+
+    protected override Task OnInitializedAsync()
+    {
+        promisesService = new PromisesService(Promises);
+        promisesService.RunServicesEnded += PromisesService_RunServicesEnded;
+
+        return base.OnInitializedAsync();
+    }
+
+    void PromisesService_RunServicesEnded(PromisesService pService)
+    {
+        promisesService = pService;
+        StateHasChanged();
+    }
+
+    public void RunServicesNeeded()
+    {
+        promisesService?.ClearResults();
+        StateHasChanged();
+
+        Task.Run(() =>
+        {
+            promisesService?.RunServices();
+            promisesService = promisesService?.Instance;
+        });
+    }
+}

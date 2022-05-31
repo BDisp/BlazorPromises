@@ -1,0 +1,53 @@
+﻿@page "/"
+@inject Promises Promises
+@using BlazorPromises
+
+<h1>Promise test</h1>
+
+<p>Result "myPromiseFn": @myPromiseFnResult</p>
+<p>Result "errorPromiseFn": @errorPromiseFnResult</p>
+<p>Result "complexPromiseFn": @complexPromiseFnResult</p>
+<p>Result "paramPromiseFn": @paramPromiseFnResult</p>
+<p>Status: @status</p>
+
+<button @onclick="@RunPromise">Click me</button>
+
+<p>Open the F12 tools and check the Console for more output</p>
+
+@code {
+    private string myPromiseFnResult = "";
+    private string errorPromiseFnResult = "";
+    private string complexPromiseFnResult = "";
+    private string paramPromiseFnResult = "";
+    private string status = "";
+
+    async void RunPromise()
+    {
+        myPromiseFnResult = "";
+        errorPromiseFnResult = "";
+        complexPromiseFnResult = "";
+        paramPromiseFnResult = "";
+        status = "";
+        StateHasChanged();
+
+        myPromiseFnResult = await Promises.ExecuteAsync<string>("myPromiseFn");
+
+        try
+        {
+            await Promises.ExecuteAsync<string>("errorPromiseFn");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            errorPromiseFnResult = e.Message;
+        }
+
+        GreetingModel model = await Promises.ExecuteAsync<GreetingModel>("complexPromiseFn");
+        complexPromiseFnResult = "Hello " + model.Name + "!";
+
+        paramPromiseFnResult = await Promises.ExecuteAsync<string>("paramPromiseFn", new GreetingModel { Name = "test" });
+
+        status = "Done";
+        StateHasChanged();
+    }
+}
